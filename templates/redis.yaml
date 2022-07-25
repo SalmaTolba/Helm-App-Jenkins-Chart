@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      {{- include "redis-labels" . | indent 2 }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        {{- include "redis-labels" . | indent  4 }}
+    spec:
+      containers:
+      - name: redis
+        image: redis:5.0-alpine
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+        ports:
+        - containerPort: {{ .Values.redis.port }}

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.pythonApp.name}}
+spec:
+  selector:
+    matchLabels:
+      {{- include "python-app-labels" . | indent 2 }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "python-app-labels" . | indent 4 }}
+    spec:
+      containers:
+      - name: pyhton-app
+        image: salmatolba/python-app:v1.0
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+        ports:
+        - containerPort: 8000
+        env:
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: python-app-config
+                key: port
+          - name: HOST
+            valueFrom:
+              configMapKeyRef:
+                name: python-app-config
+                key: host
+          - name: REDIS_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: python-app-config
+                key: redis_host
+          - name: REDIS_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: python-app-config
+                key: redis_port
+          - name: REDIS_DB
+            valueFrom:
+              configMapKeyRef:
+                name: python-app-config
+                key: redis_db
+          - name: ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: python-app-config
+                key: environment
